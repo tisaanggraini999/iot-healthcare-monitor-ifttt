@@ -3,23 +3,32 @@
 
 #include <HTTPClient.h>
 
-String IFTTT_SERVER = "http://maker.ifttt.com";
-String EVENT_NAME   = "Data_Tensi";
-String IFTTT_KEY    = "YOUR_IFTTT_KEY";
+// === IFTTT CONFIG (FROM ORIGINAL CODE) ===
+String IFTTT_EVENT = "Data Tensi";
+String IFTTT_KEY   = "bH74A7SPEKI4f8SoLgnQS7J15s9egoQBKUxY0UhD4S";
 
-void sendToIFTTT(int sys, int dia, int pulse) {
-  String url = IFTTT_SERVER + "/trigger/" + EVENT_NAME +
+void sendToIFTTT(int systolic, int diastolic) {
+
+  String url = "https://maker.ifttt.com/trigger/" + IFTTT_EVENT +
                "/with/key/" + IFTTT_KEY +
-               "?value1=" + String(sys) +
-               "&value2=" + String(dia) +
-               "&value3=" + String(pulse);
+               "?value1=" + String(systolic) +
+               "&value2=" + String(diastolic);
+
+  Serial.println("[IFTTT] URL:");
+  Serial.println(url);
 
   HTTPClient http;
   http.begin(url);
   int httpCode = http.GET();
-  http.end();
 
-  Serial.println("IFTTT Response: " + String(httpCode));
+  if (httpCode > 0) {
+    Serial.print("[IFTTT] HTTP Code: ");
+    Serial.println(httpCode);
+  } else {
+    Serial.println("[IFTTT] Connection failed");
+  }
+
+  http.end();
 }
 
 #endif
